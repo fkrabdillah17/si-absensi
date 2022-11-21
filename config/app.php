@@ -195,6 +195,8 @@ return [
         App\Providers\EventServiceProvider::class,
         App\Providers\RouteServiceProvider::class,
 
+        // Costum Providers
+        RealRashid\SweetAlert\SweetAlertServiceProvider::class,
     ],
 
     /*
@@ -210,6 +212,9 @@ return [
 
     'aliases' => Facade::defaultAliases()->merge([
         // 'ExampleClass' => App\Example\ExampleClass::class,
+
+        // Costum fecade
+        'Alert' => RealRashid\SweetAlert\Facades\Alert::class,
     ])->toArray(),
 
 ];

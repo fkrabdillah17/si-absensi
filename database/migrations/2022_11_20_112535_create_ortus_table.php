@@ -18,8 +18,6 @@ return new class extends Migration
             $table->string('nama')->unique();
             $table->text('alamat');
             $table->bigInteger('no_hp');
-            $table->unsignedBigInteger('id_siswa');
-            $table->foreign('id_sisaw')->references('id')->on('siswas');
             $table->timestamps();
         });
     }
