@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Jurusan;
 use App\Models\Kelas;
+use App\Models\Mapel;
 use Illuminate\Http\Request;
 use RealRashid\SweetAlert\Facades\Alert;
 
@@ -165,4 +166,82 @@ class AdminController extends Controller
         $kelas->delete();
         return redirect()->route('kelas.index')->with('success', 'Data kelas berhasil dihapus!');
     }
+
+    public function mapel_index(){
+        $data = Mapel::orderBy('mapel','asc')->get();
+        return view('admin.mapel_index', compact('data'));
+    }
+    public function mapel_create(){
+        return view('admin.mapel_create');
+    }
+    public function mapel_store(Request $request){
+        $rules = [
+            'mapel' => 'required|unique:mapels,mapel',
+            'kode_mapel' => 'required|unique:mapels,kode_mapel',
+            'sks' => 'required',
+        ];
+        $message = [
+            'sks.required' => 'Isi kolom sks!',
+            'mapel.required' => 'Isi kolom mata pelajaran!',
+            'mapel.unique' => 'Nama mata pelajaran sudah ada!',
+            'kode_mapel.required' => 'Isi kode mata pelajaran!',
+            'kode_mapel.unique' => 'Kode mata pelajaran sudah ada!',
+        ];
+        $validate = $this->validate($request, $rules, $message);
+
+        if ($validate) {
+            Mapel::create([
+                'mapel' => $request->mapel,
+                'kode_mapel' => $request->kode_mapel,
+                'sks' => $request->sks,
+            ]);
+            return redirect()->route('mapel.index')->with('success', 'Data mata pelajaran berhasil ditambahkan!');
+        }
+    }
+    public function mapel_edit(Mapel $mapel){
+        return view('admin.mapel_edit', compact('mapel'));
+    }
+    public function mapel_update(Request $request, Mapel $mapel){
+        if($request->mapel != $request->oldMapel && $request->kode_mapel != $request->oldKodemapel ){
+            $rules_mapel = "required|unique:mapels,mapel";
+            $rules_kodemapel = "required|unique:mapels,kode_mapel";
+        } elseif($request->mapel == $request->oldMapel && $request->kode_mapel != $request->oldKodemapel){
+            $rules_mapel = "required";
+            $rules_kodemapel = "required|unique:mapels,kode_mapel";
+        } elseif ($request->mapel != $request->oldMapel && $request->kode_mapel == $request->oldKodemapel){
+            $rules_mapel = "required|unique:mapels,mapel";
+            $rules_kodemapel = "required";
+        } else {
+            $rules_mapel = "required";
+            $rules_kodemapel = "required";
+        }
+
+        $rules = [
+            'mapel' => $rules_mapel,
+            'kode_mapel' => $rules_kodemapel,
+            'sks' => 'required',
+        ];
+        $message = [
+            'sks.required' => 'Isi kolom sks!',
+            'mapel.required' => 'Isi kolom mata pelajaran!',
+            'mapel.unique' => 'Nama mata pelajaran sudah ada!',
+            'kode_mapel.required' => 'Isi kode mata pelajaran!',
+            'kode_mapel.unique' => 'Kode mata pelajaran sudah ada!',
+        ];
+        $validate = $this->validate($request, $rules, $message);
+
+        if ($validate) {
+            $mapel->update([
+                'mapel' => $request->mapel,
+                'kode_mapel' => $request->kode_mapel,
+                'sks' => $request->sks,
+            ]);
+            return redirect()->route('mapel.index')->with('success', 'Data mata pelajaran berhasil diubah!');
+        }
+    }
+    public function mapel_destroy(Mapel $mapel){
+        $mapel->delete();
+        return redirect()->route('mapel.index')->with('success','Data mata pelajaran berhasil dihapus!');
+    }
+
 }

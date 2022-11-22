@@ -18,6 +18,7 @@
                     <ul class="ml-3 bg-base-100" style="background-color: #646FD4">
                         <li><a href="{{ route('jurusan.index') }}">Jurusan</a></li>
                         <li><a href="{{ route('kelas.index') }}">Kelas</a></li>
+                        <li><a href="{{ route('mapel.index') }}">Mata Pelajaran</a></li>
                     </ul>
                 </li>
             </ul>
@@ -42,6 +43,7 @@
                 <ul class="rounded-b-lg bg-base-100 p-2" style="background-color: #646FD4">
                     <li><a href="{{ route('jurusan.index') }}">Jurusan</a></li>
                     <li><a href="{{ route('kelas.index') }}">Kelas</a></li>
+                    <li><a href="{{ route('mapel.index') }}">Mata Pelajaran</a></li>
                 </ul>
             </li>
         </ul>
