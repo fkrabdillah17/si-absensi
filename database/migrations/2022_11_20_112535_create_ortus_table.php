@@ -15,9 +15,11 @@ return new class extends Migration
     {
         Schema::create('ortus', function (Blueprint $table) {
             $table->id();
-            $table->string('nama')->unique();
+            $table->string('nama');
             $table->text('alamat');
-            $table->bigInteger('no_hp');
+            $table->string('no_hp');
+            $table->unsignedBigInteger('id_akun');
+            $table->foreign('id_akun')->references('id')->on('users');
             $table->timestamps();
         });
     }

@@ -10,4 +10,8 @@ class Ortu extends Model
     use HasFactory;
     protected $guarded = ['id'];
 
+    public function getAkun(){
+        return $this->hasOne(User::class,'id','id_akun');
+    }
+
 }

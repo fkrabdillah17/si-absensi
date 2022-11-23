@@ -1,14 +1,14 @@
 @extends('layouts.main')
 
 @section('title')
-    Mata Pelajaran
+    Guru
 @endsection
 
 @section('content')
     <div class="mb-6 flex w-full min-w-0 flex-col break-words rounded-xl bg-white shadow-lg">
         <div class="mb-0 rounded-t border-0 px-4 py-3">
             <div class="flex flex-row items-center">
-                <a type="button" href="{{ route('mapel.create') }}" class="btn-primary btn-sm btn">Tambah</a>
+                <a type="button" href="{{ route('guru.create') }}" class="btn-primary btn-sm btn">Tambah</a>
             </div>
         </div>
         <div class="block w-full overflow-x-auto">
@@ -16,21 +16,30 @@
                 <thead>
                     <tr>
                         <th></th>
-                        <th data-priority="1">Mata Pelajaran</th>
-                        <th>Kode</th>
-                        <th>SKS</th>
+                        <th data-priority="1">Nama</th>
+                        <th>NIP</th>
+                        <th>Jenis Kelamin</th>
+                        <th>Agama</th>
+                        <th>Alamat</th>
+                        <th>No. Hp</th>
+                        <th>Username</th>
                         <th data-priority="2">Aksi</th>
                     </tr>
                 </thead>
                 <tbody>
-                    @foreach ($data as $mapel)
+                    @foreach ($data as $guru)
                         <tr>
                             <th>{{ $loop->iteration }}</th>
-                            <td class="uppercase">{{ $mapel->mapel }}</td>
-                            <th class="uppercase">{{ $mapel->kode_mapel }}</th>
-                            <th>{{ $mapel->sks }}</th>
+                            <td class="uppercase">{{ $guru->nama }}</td>
+                            <th class="uppercase">{{ $guru->nip }}</th>
+                            <th>{{ $guru->jk }}</th>
+                            <th>{{ $guru->agama }}</th>
+                            <th>{{ $guru->alamat }}</th>
+                            <th>{{ $guru->no_hp }}</th>
+                            <th>{{ $guru->getAkun->username }}</th>
+                            </th>
                             <th class="flex flex-row justify-around">
-                                <a class="btn-ghost btn" href="{{ route('mapel.edit', $mapel->id) }}">
+                                <a class="btn-ghost btn" href="{{ route('guru.edit', $guru->id) }}">
                                     <div class="tooltip tooltip-left" data-tip="Edit Data">
                                         <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="h-6 w-6 fill-orange-500">
                                             <path
@@ -38,7 +47,7 @@
                                         </svg>
                                     </div>
                                 </a>
-                                <label for="my-modal-{{ $mapel->id }}" class="btn-ghost btn">
+                                <label for="my-modal-{{ $guru->id }}" class="btn-ghost btn">
                                     <div class="tooltip tooltip-left" data-tip="Hapus Data">
                                         <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="h-6 w-6 fill-red-500">
                                             <path fill-rule="evenodd"
@@ -55,10 +64,14 @@
                 <tfoot>
                     <tr>
                         <th></th>
-                        <th>Mata Pelajaran</th>
-                        <th>Kode</th>
-                        <th>SKS</th>
-                        <th>Aksi</th>
+                        <th data-priority="1">Nama</th>
+                        <th>NIP</th>
+                        <th>Jenis Kelamin</th>
+                        <th>Agama</th>
+                        <th>Alamat</th>
+                        <th>No. Hp</th>
+                        <th>Username</th>
+                        <th data-priority="2">Aksi</th>
                     </tr>
                 </tfoot>
             </table>
@@ -73,10 +86,10 @@
                     <path stroke-linecap="round" stroke-linejoin="round" d="M12 9v3.75m9-.75a9 9 0 11-18 0 9 9 0 0118 0zm-9 3.75h.008v.008H12v-.008z" />
                 </svg>
 
-                <h3 class="text-center text-lg font-bold">Apakah anda yakin akan menghapus mata pelajaran {{ $modal->mapel }}?</h3>
+                <h3 class="text-center text-lg font-bold">Apakah anda yakin akan menghapus data {{ $modal->nama }}?</h3>
                 <div class="my-4 flex flex-row justify-around">
                     <label for="my-modal-{{ $modal->id }}" class="btn-warning btn capitalize">Tidak</label>
-                    <form action="{{ route('mapel.destroy', $modal->id) }}" method="post">
+                    <form action="{{ route('guru.destroy', $modal->id) }}" method="post">
                         @csrf
                         @method('delete')
                         <button type="submit" class="btn-primary btn capitalize">Hapus</button>

@@ -15,16 +15,18 @@ return new class extends Migration
     {
         Schema::create('siswas', function (Blueprint $table) {
             $table->id();
-            $table->bigInteger('nisn')->unique();
-            $table->string('nama')->unique();
+            $table->string('nisn')->unique();
+            $table->string('nama');
             $table->string('jk');
             $table->string('agama');
             $table->text('alamat');
-            $table->bigInteger('no_hp');
+            $table->string('no_hp');
             $table->unsignedBigInteger('kelas');
             $table->unsignedBigInteger('jurusan');
             $table->unsignedBigInteger('id_ortu');
+            $table->unsignedBigInteger('id_akun');
             $table->foreign('kelas')->references('id')->on('kelas');
+            $table->foreign('id_akun')->references('id')->on('users');
             $table->foreign('jurusan')->references('id')->on('jurusans');
             $table->foreign('id_ortu')->references('id')->on('ortus');
             $table->timestamps();

@@ -13,6 +13,9 @@ use App\Http\Controllers\AdminController;
 | contains the "web" middleware group. Now create something great!
 |
 */
+Route::get('/ex', function () {
+    return view('admin.ex');
+});
 
 Route::get('/', function () {
     return view('welcome');
@@ -40,6 +43,25 @@ Route::get('/mapel/{mapel}/edit', [AdminController::class,'mapel_edit'])->name('
 Route::patch('/mapel/{mapel}', [AdminController::class,'mapel_update'])->name('mapel.update');
 Route::delete('/mapel/{mapel}', [AdminController::class,'mapel_destroy'])->name('mapel.destroy');
 
-Route::get('/ex', function () {
-    return view('admin.ex');
-});
+Route::get('/siswa', [AdminController::class,'siswa_index'])->name('siswa.index');
+Route::get('/siswa/create', [AdminController::class,'siswa_create'])->name('siswa.create');
+Route::post('/siswa', [AdminController::class,'siswa_store'])->name('siswa.store');
+Route::get('/siswa/{siswa}/edit', [AdminController::class,'siswa_edit'])->name('siswa.edit');
+Route::patch('/siswa/{siswa}', [AdminController::class,'siswa_update'])->name('siswa.update');
+Route::delete('/siswa/{siswa}', [AdminController::class,'siswa_destroy'])->name('siswa.destroy');
+
+Route::get('/guru', [AdminController::class,'guru_index'])->name('guru.index');
+Route::get('/guru/create', [AdminController::class,'guru_create'])->name('guru.create');
+Route::post('/guru', [AdminController::class,'guru_store'])->name('guru.store');
+Route::get('/guru/{guru}/edit', [AdminController::class,'guru_edit'])->name('guru.edit');
+Route::patch('/guru/{guru}', [AdminController::class,'guru_update'])->name('guru.update');
+Route::delete('/guru/{guru}', [AdminController::class,'guru_destroy'])->name('guru.destroy');
+
+Route::get('/jadwal', [AdminController::class,'jadwal_index'])->name('jadwal.index');
+Route::get('/jadwal/create', [AdminController::class,'jadwal_create'])->name('jadwal.create');
+Route::post('/jadwal', [AdminController::class,'jadwal_store'])->name('jadwal.store');
+Route::get('/jadwal/{jadwal}/edit', [AdminController::class,'jadwal_edit'])->name('jadwal.edit');
+Route::patch('/jadwal/{jadwal}', [AdminController::class,'jadwal_update'])->name('jadwal.update');
+Route::delete('/jadwal/{jadwal}', [AdminController::class,'jadwal_destroy'])->name('jadwal.destroy');
+
+

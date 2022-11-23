@@ -5,7 +5,7 @@
 @endsection
 
 @section('content')
-    <div class="relative mb-6 flex w-full min-w-0 flex-col break-words rounded-xl bg-white shadow-lg">
+    <div class="mb-6 flex w-full min-w-0 flex-col break-words rounded-xl bg-white shadow-lg">
         <div class="mb-0 rounded-t border-0 px-4 py-3">
             <div class="flex flex-row items-center">
                 <a type="button" href="{{ route('jurusan.create') }}" class="btn-primary btn-sm btn">Tambah</a>
@@ -16,9 +16,9 @@
                 <thead>
                     <tr>
                         <th></th>
-                        <th>Jurusan</th>
+                        <th data-priority="1">Jurusan</th>
                         <th>Kode</th>
-                        <th>Aksi</th>
+                        <th data-priority="2">Aksi</th>
                     </tr>
                 </thead>
                 <tbody>

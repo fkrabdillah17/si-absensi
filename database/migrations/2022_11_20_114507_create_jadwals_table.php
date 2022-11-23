@@ -15,11 +15,13 @@ return new class extends Migration
     {
         Schema::create('jadwals', function (Blueprint $table) {
             $table->id();
-            $table->unsignedBigInteger('mapel');
             $table->integer('jumlah_pertemuan');
-            $table->unsignedBigInteger('kelas');
-            $table->foreign('mapel')->references('id')->on('mapels');
-            $table->foreign('kelas')->references('id')->on('kelas');
+            $table->unsignedBigInteger('id_mapel');
+            $table->unsignedBigInteger('id_kelas');
+            $table->unsignedBigInteger('id_guru');
+            $table->foreign('id_mapel')->references('id')->on('mapels');
+            $table->foreign('id_kelas')->references('id')->on('kelas');
+            $table->foreign('id_guru')->references('id')->on('gurus');
             $table->timestamps();
         });
     }

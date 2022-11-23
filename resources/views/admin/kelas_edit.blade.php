@@ -1,7 +1,7 @@
 @extends('layouts.main')
 
 @section('title')
-    Tambah Data Kelas
+    Edit Data Kelas
 @endsection
 
 @section('content')

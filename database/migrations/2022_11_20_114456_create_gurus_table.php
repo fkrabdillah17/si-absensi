@@ -15,14 +15,14 @@ return new class extends Migration
     {
         Schema::create('gurus', function (Blueprint $table) {
             $table->id();
-            $table->bigInteger('nip')->unique();
+            $table->string('nip')->unique();
             $table->string('nama');
             $table->string('jk');
             $table->string('agama');
             $table->text('alamat');
-            $table->bigInteger('no_hp');
-            $table->unsignedBigInteger('mapel');
-            $table->foreign('mapel')->references('id')->on('mapels');
+            $table->string('no_hp');
+            $table->unsignedBigInteger('id_akun');
+            $table->foreign('id_akun')->references('id')->on('users');
             $table->timestamps();
         });
     }
