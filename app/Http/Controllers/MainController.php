@@ -39,26 +39,45 @@ class MainController extends Controller
             $siswa = Siswa::all()->count();
             return view('admin.index', compact('guru','jurusan','kelas','mapel','ortu','siswa'));
         } elseif($roleAkun == 3) {
-            $idSiswa = Siswa::where('id_akun', Auth::user()->id)->value('id');
-            $data = Presensi::where('siswa', $idSiswa)->get();
-            $izin = $data->where('keterangan', 1)->count();
-            $sakit = $data->where('keterangan', 2)->count();
-            $alpha = $data->where('keterangan', 3)->count();
-            $hadir = $data->where('keterangan', 4)->count();
-            return view('admin.index', compact('data','izin','sakit','hadir','alpha'));
+            $idKelas = Siswa::where('id_akun', Auth::user()->id)->value('kelas');
+            $siswa = Siswa::where('id_akun', Auth::user()->id)->value('id');
+            $mapel = Jadwal::where('id_kelas', $idKelas)->get();
+            return view('admin.index', compact('mapel','siswa'));
         } else {
             $idOrtu = Ortu::where('id_akun', Auth::user()->id)->value('id');
             $siswa = Siswa::where('id_ortu', $idOrtu)->get();
             return view('admin.index', compact('siswa'));
         }
     }
-    public function report($siswa){
-        $data = Presensi::where('siswa', $siswa)->get();
-        $izin = $data->where('keterangan', 1)->count();
-        $sakit = $data->where('keterangan', 2)->count();
-        $alpha = $data->where('keterangan', 3)->count();
-        $hadir = $data->where('keterangan', 4)->count();
-        return view('orangtua.report', compact('data','izin','sakit','hadir','alpha'));
+
+    public function pilih_mapel($siswa){
+        $idKelas = Siswa::where('id',$siswa)->value('kelas');
+        $data = Jadwal::where('id_kelas', $idKelas)->get();
+        return view('pilih_mapel', compact('data','siswa'));
+    }
+
+    public function report($siswa, $mapel){
+        if(Auth::user()->role == 2){
+            $data = Presensi::where('siswa', $siswa)->where('mapel', $mapel)->get();
+            $izin = $data->where('keterangan', 1)->count();
+            $sakit = $data->where('keterangan', 2)->count();
+            $alpha = $data->where('keterangan', 3)->count();
+            $hadir = $data->where('keterangan', 4)->count();
+            if($data->count() < 1){
+                return back()->with('info','Data presensi kosong atau belum melakukan presensi!');
+            }
+            return view('report', compact('data','izin','sakit','hadir','alpha'));
+        } elseif(Auth::user()->role == 3){
+            $data = Presensi::where('siswa', $siswa)->where('mapel', $mapel)->get();
+            $izin = $data->where('keterangan', 1)->count();
+            $sakit = $data->where('keterangan', 2)->count();
+            $alpha = $data->where('keterangan', 3)->count();
+            $hadir = $data->where('keterangan', 4)->count();
+            if($data->count() < 1){
+                return back()->with('info','Data presensi kosong atau belum melakukan presensi!');
+            }
+            return view('report', compact('data','izin','sakit','hadir','alpha'));
+        }
     }
     public function jurusan_index (){
         $data = Jurusan::orderBy('jurusan','asc')->get();
@@ -772,6 +791,7 @@ class MainController extends Controller
         }
     }
     public function presensi_store(Request $request, $mapel, $kelas){
+        // dd($request->all());
         $rules=[
             'tema' => 'required',
             'pembahasan' => 'required',

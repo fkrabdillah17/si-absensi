@@ -26,6 +26,11 @@
                         </ul>
                     </li>
                 @endif
+                @if (Auth::user()->role == 1)
+                    <li><a href="{{ route('presensi.index') }}">Presensi</a></li>
+                    <li><a href="{{ route('history.presensi.index') }}">Riwayat</a></li>
+                @endif
+                <li><a href="{{ route('password.edit') }}">Ubah Password</a></li>
                 <li><a href="{{ route('logout') }}">Keluar</a></li>
             </ul>
         </div>

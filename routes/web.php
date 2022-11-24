@@ -14,13 +14,15 @@ use App\Http\Controllers\AuthController;
 | contains the "web" middleware group. Now create something great!
 |
 */
-Route::get('/login', [AuthController::class, 'index'])->name('login');
+Route::get('/', [AuthController::class, 'index'])->name('login');
 Route::post('/login', [AuthController::class, 'login'])->name('store.login');
 Route::get('/logout', [AuthController::class, 'logout'])->name('logout');
 
 Route::middleware(['auth'])->group(function () {
     Route::get('/dashboard', [MainController::class,'dashboard'])->name('dashboard');
-    Route::get('/report/{siswa}', [MainController::class,'report'])->name('report');
+    Route::get('/pilih-mapel/{siswa}', [MainController::class,'pilih_mapel'])->name('pilih.mapel');
+    Route::get('/report/{siswa}/{mapel}', [MainController::class,'report'])->name('report');
+    // Route::get('/report/siswa/{mapel}', [MainController::class,'report_index'])->name('report_mapel');
     Route::get('/password', [MainController::class,'password_edit'])->name('password.edit');
     Route::patch('/password/{user}', [MainController::class,'password_update'])->name('password.update');
 });

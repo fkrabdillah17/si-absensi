@@ -71,7 +71,7 @@
                             $iteration = 1;
                         @endphp
                         @foreach ($data as $sw)
-                            <input type="hidden" name="siswa[{{ $sw->getSiswa->id }}]" value="{{ $sw->getSiswa->id }}">
+                            <input type="hidden" name="siswa[{{ $loop->iteration }}]" value="{{ $sw->getSiswa->id }}">
                             <input type="hidden" name="iteration" value="{{ $iteration++ }}">
                             <tr class="hover">
                                 <td>{{ $sw->getSiswa->nisn }}</td>
@@ -81,28 +81,28 @@
                                     <div class="form-control">
                                         <label class="label cursor-pointer">
                                             <span class="label-text mr-2">Izin</span>
-                                            <input type="radio" name="keterangan[{{ $sw->getSiswa->id }}]" class="radio checked:bg-red-500" value="1"
+                                            <input type="radio" name="keterangan[{{ $loop->iteration }}]" class="radio checked:bg-red-500" value="1"
                                                 {{ $sw->keterangan == 1 ? 'checked' : '' }} />
                                         </label>
                                     </div>
                                     <div class="form-control">
                                         <label class="label cursor-pointer">
                                             <span class="label-text mr-2">Sakit</span>
-                                            <input type="radio" name="keterangan[{{ $sw->getSiswa->id }}]" class="radio checked:bg-red-500" value="2"
+                                            <input type="radio" name="keterangan[{{ $loop->iteration }}]" class="radio checked:bg-red-500" value="2"
                                                 {{ $sw->keterangan == 2 ? 'checked' : '' }} />
                                         </label>
                                     </div>
                                     <div class="form-control">
                                         <label class="label cursor-pointer">
                                             <span class="label-text mr-2">Alpha</span>
-                                            <input type="radio" name="keterangan[{{ $sw->getSiswa->id }}]" class="radio checked:bg-red-500" value="3"
+                                            <input type="radio" name="keterangan[{{ $loop->iteration }}]" class="radio checked:bg-red-500" value="3"
                                                 {{ $sw->keterangan == 3 ? 'checked' : '' }} />
                                         </label>
                                     </div>
                                     <div class="form-control">
                                         <label class="label cursor-pointer">
                                             <span class="label-text mr-2">Hadir</span>
-                                            <input type="radio" name="keterangan[{{ $sw->getSiswa->id }}]" class="radio checked:bg-red-500" value="4"
+                                            <input type="radio" name="keterangan[{{ $loop->iteration }}]" class="radio checked:bg-red-500" value="4"
                                                 {{ $sw->keterangan == 4 ? 'checked' : '' }} />
                                         </label>
                                     </div>
