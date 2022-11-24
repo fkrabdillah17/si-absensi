@@ -18,7 +18,8 @@ return new class extends Migration
             $table->integer('pertemuan');
             $table->text('tema');
             $table->text('pembahasan');
-            $table->timestamp('tgl_presensi');
+            $table->string('keterangan');
+            $table->string('tgl_presensi');
             $table->unsignedBigInteger('kelas');
             $table->unsignedBigInteger('mapel');
             $table->unsignedBigInteger('guru');

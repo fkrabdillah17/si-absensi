@@ -14,14 +14,51 @@ use App\Models\Presensi;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Str;
 use Illuminate\Http\Request;
+use Illuminate\Support\Carbon;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Redis;
 use RealRashid\SweetAlert\Facades\Alert;
 
 
-class AdminController extends Controller
+class MainController extends Controller
 {
     public function dashboard (){
-        return view('admin.index');
+        $roleAkun = Auth::user()->role;
+        if($roleAkun == 1){
+            $idGuru = Guru::where('id_akun', Auth::user()->id)->value('id');
+            $data = Jadwal::where('id_guru', $idGuru)->get();
+            $mapel = $data->unique('id_mapel')->count();
+            $kelas = $data->unique('id_kelas')->count();
+            return view('admin.index', compact('mapel','kelas'));
+        } elseif($roleAkun == 0){
+            $guru = Guru::all()->count();
+            $jurusan = Jurusan::all()->count();
+            $kelas = Kelas::all()->count();
+            $mapel = Mapel::all()->count();
+            $ortu = Ortu::all()->count();
+            $siswa = Siswa::all()->count();
+            return view('admin.index', compact('guru','jurusan','kelas','mapel','ortu','siswa'));
+        } elseif($roleAkun == 3) {
+            $idSiswa = Siswa::where('id_akun', Auth::user()->id)->value('id');
+            $data = Presensi::where('siswa', $idSiswa)->get();
+            $izin = $data->where('keterangan', 1)->count();
+            $sakit = $data->where('keterangan', 2)->count();
+            $alpha = $data->where('keterangan', 3)->count();
+            $hadir = $data->where('keterangan', 4)->count();
+            return view('admin.index', compact('data','izin','sakit','hadir','alpha'));
+        } else {
+            $idOrtu = Ortu::where('id_akun', Auth::user()->id)->value('id');
+            $siswa = Siswa::where('id_ortu', $idOrtu)->get();
+            return view('admin.index', compact('siswa'));
+        }
+    }
+    public function report($siswa){
+        $data = Presensi::where('siswa', $siswa)->get();
+        $izin = $data->where('keterangan', 1)->count();
+        $sakit = $data->where('keterangan', 2)->count();
+        $alpha = $data->where('keterangan', 3)->count();
+        $hadir = $data->where('keterangan', 4)->count();
+        return view('orangtua.report', compact('data','izin','sakit','hadir','alpha'));
     }
     public function jurusan_index (){
         $data = Jurusan::orderBy('jurusan','asc')->get();
@@ -55,7 +92,6 @@ class AdminController extends Controller
         return view('admin.jurusan_edit', compact('jurusan'));
     }
     public function jurusan_update(Request $request, Jurusan $jurusan){
-
         if($request->jurusan != $request->oldJurusan && $request->kode_jurusan != $request->oldKodejurusan ){
             $rules_jurusan = "required|unique:jurusans,jurusan";
             $rules_kodejurusan = "required|unique:jurusans,kode_jurusan";
@@ -84,7 +120,6 @@ class AdminController extends Controller
         // End validasi
 
         if ($validate) {
-            // Start Save Data
             $jurusan->update([
                 'jurusan' => $request->jurusan,
                 'kode_jurusan' => $request->kode_jurusan,
@@ -705,4 +740,143 @@ class AdminController extends Controller
         $jadwal->delete();
         return redirect()->route('jadwal.index')->with('success','Data jadwal berhasil dihapus!');
     }
+    public function presensi_index(){
+        $idGuru = Guru::where('id_akun', Auth::user()->id)->value('id');
+        $data = Jadwal::where('id_guru', $idGuru)->get();
+        $mapel = $data->unique('id_mapel');
+        return view('guru.presensi_index', compact('mapel'));
+    }
+    public function presensi_kelas($mapel){
+        $idGuru = Guru::where('id_akun', Auth::user()->id)->value('id');
+        $data = Jadwal::where('id_guru', $idGuru)->where('id_mapel', $mapel)->get();
+        $kelas = $data->unique('id_kelas');
+        $mapel = $data[0]->getMapel->mapel; 
+        return view('guru.presensi_kelas', compact('kelas','mapel'));
+    }
+    public function presensi_siswa($mapel, $kelas){
+        $idGuru = Guru::where('id_akun', Auth::user()->id)->value('id');
+        $data = Jadwal::where('id_guru', $idGuru)->where('id_mapel', $mapel)->where('id_kelas', $kelas)->get();
+        $cek_pertemuan = Presensi::where('guru', $idGuru)->where('mapel', $mapel)->where('kelas', $kelas)->orderBy('created_at','asc')->value('pertemuan');
+        $siswa = Siswa::where('kelas', $kelas)->orderBy('nama','asc')->get();
+        if($cek_pertemuan != null){
+            $pertemuan = $cek_pertemuan+=1;
+        } else {
+            $pertemuan = 1;
+        }
+
+        $cekAbsensi = Presensi::where('tgl_presensi', \Carbon\Carbon::now()->isoFormat('dddd, D MMM Y'))->where('guru', $idGuru)->where('mapel', $mapel)->where('kelas', $kelas)->count();
+        if($cekAbsensi > 0){
+            return back()->with('info','Sudah melakukan absensi pada hari ini!');
+        } else {
+            return view('guru.presensi_siswa', compact('data','pertemuan','siswa'));
+        }
+    }
+    public function presensi_store(Request $request, $mapel, $kelas){
+        $rules=[
+            'tema' => 'required',
+            'pembahasan' => 'required',
+        ];
+        $message=[
+            'tema.required' => 'Isi  tema!',
+            'pembahasan.required' => 'Isi pembahasan!',
+        ];
+        $validate = $this->validate($request, $rules, $message);
+        if($validate){
+            $idGuru = Guru::where('id_akun', Auth::user()->id)->value('id');
+            $batas = $request->iteration;
+            for($i=1;$i<=$batas;$i++){
+                Presensi::create([
+                    'pertemuan' => $request->pertemuan,
+                    'tema' => $request->tema,
+                    'pembahasan' => $request->pembahasan,
+                    'keterangan' => $request->keterangan[$i],
+                    'tgl_presensi' => \Carbon\Carbon::now()->isoFormat('dddd, D MMM Y'),
+                    'kelas' => $kelas,
+                    'mapel' => $mapel,
+                    'guru' => $idGuru,
+                    'siswa' => $request->siswa[$i]
+                ]);
+            }
+            return redirect()->route('presensi.index')->with('success','Berhasil melakukan presensi');
+        }
+    }
+    public function history_presensi_index(){
+        $idGuru = Guru::where('id_akun', Auth::user()->id)->value('id');
+        $data = Jadwal::where('id_guru', $idGuru)->get();
+        $mapel = $data->unique('id_mapel');
+        return view('guru.history_presensi_index', compact('mapel'));
+    }
+    public function history_presensi_kelas($mapel){
+        $idGuru = Guru::where('id_akun', Auth::user()->id)->value('id');
+        $data = Jadwal::where('id_guru', $idGuru)->where('id_mapel', $mapel)->get();
+        $kelas = $data->unique('id_kelas');
+        $mapel = $data[0]->getMapel->mapel;
+        return view('guru.history_presensi_kelas', compact('kelas','mapel'));
+    }
+    public function history_presensi_pertemuan($mapel, $kelas){
+        $idGuru = Guru::where('id_akun', Auth::user()->id)->value('id');
+        $data = Presensi::where('guru', $idGuru)->where('mapel', $mapel)->where('kelas', $kelas)->get();
+        $pertemuan = $data->unique('pertemuan')->sortBy('pertemuan');
+        $mapel = $data[0]->getMapel->mapel;
+        $kelas = $data[0]->getKelas->kelas . " " . $data[0]->getKelas->kode_kelas . " " . $data[0]->getKelas->getJurusan->kode_jurusan;
+        return view('guru.history_presensi_pertemuan', compact('pertemuan','kelas','mapel'));
+    }
+    public function history_presensi_show($mapel, $kelas, $pertemuan){
+        $idGuru = Guru::where('id_akun', Auth::user()->id)->value('id');
+        $data = Presensi::where('mapel', $mapel)->where('kelas',$kelas)->where('pertemuan',$pertemuan)->where('guru',$idGuru)->get();
+        return view('guru.history_presensi_show', compact('data'));
+    }
+    public function history_presensi_update(Request $request, $mapel, $kelas, $pertemuan){
+        // dd($request);
+        $rules=[
+            'tema' => 'required',
+            'pembahasan' => 'required',
+        ];
+        $message=[
+            'tema.required' => 'Isi  tema!',
+            'pembahasan.required' => 'Isi pembahasan!',
+        ];
+        $validate = $this->validate($request, $rules, $message);
+        if($validate){
+            $idGuru = Guru::where('id_akun', Auth::user()->id)->value('id');
+            $data = Presensi::where('mapel', $mapel)->where('kelas',$kelas)->where('pertemuan',$pertemuan)->where('guru',$idGuru)->get();
+            $batas = $request->iteration;
+            foreach($data as $dt){
+                for($i=1;$i<=$batas;$i++){
+                    if ($request->siswa[$i] == $dt->siswa) {
+                        $dt->update([
+                        'tema' => $request->tema,
+                        'pembahasan' => $request->pembahasan,
+                        'keterangan' => $request->keterangan[$i],
+                        ]);
+                    }
+                }
+            }
+            return redirect()->route('history.presensi.index')->with('success','Berhasil mengubah data presensi');
+        }
+    }
+    public function password_edit(){
+        return view('password_edit');
+    }
+    public function password_update(Request $request, User $user){
+        $rules = [
+            'old_password' => 'required',
+            'password' => 'required|confirmed',
+        ];
+        $message = [
+            'old_password.required' => 'Isi Password Anda',
+            'password.required' => 'Isi Password Baru Anda',
+            'password.confirmed' => 'Password Baru Tidak Sama',
+        ];
+        $validate = $this->validate($request, $rules, $message);
+        if (Hash::check($request->old_password, $user->password)) {
+            if ($validate) {
+                $user->update([
+                    'password' => Hash::make($request->password)
+                ]);
+                return redirect()->route('dashboard')->with('success', 'Password berhasil diubah!');
+            }
+        } 
+    }
+
 }
