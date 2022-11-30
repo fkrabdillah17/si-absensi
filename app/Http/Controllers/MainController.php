@@ -846,6 +846,13 @@ class MainController extends Controller
         $data = Presensi::where('mapel', $mapel)->where('kelas',$kelas)->where('pertemuan',$pertemuan)->where('guru',$idGuru)->get();
         return view('guru.history_presensi_show', compact('data'));
     }
+    public function history_presensi_rekap_show($mapel, $kelas){
+        $idGuru = Guru::where('id_akun', Auth::user()->id)->value('id');
+        $data = Presensi::where('mapel', $mapel)->where('kelas',$kelas)->where('guru',$idGuru)->orderBy('siswa','asc')->orderBy('pertemuan','asc')->get();
+        $pertemuan = $data->unique('pertemuan')->count();
+        // dd($pertemuan);
+        return view('guru.history_presensi_rekap_show', compact('data', 'mapel', 'kelas','pertemuan'));
+    }
     public function history_presensi_update(Request $request, $mapel, $kelas, $pertemuan){
         // dd($request);
         $rules=[

@@ -81,6 +81,7 @@ Route::middleware(['auth','checkRole:1'])->group(function () {
     Route::get('/history/presensi', [MainController::class,'history_presensi_index'])->name('history.presensi.index');
     Route::get('/history/presensi/{mapel}', [MainController::class,'history_presensi_kelas'])->name('history.presensi.kelas');
     Route::get('/history/presensi/{mapel}/{kelas}', [MainController::class,'history_presensi_pertemuan'])->name('history.presensi.pertemuan');
+    Route::get('/history/presensi/{mapel}/{kelas}/rekap-presensi', [MainController::class,'history_presensi_rekap_show'])->name('history.presensi.rekap.show');
     Route::get('/history/presensi/{mapel}/{kelas}/{pertemuan}', [MainController::class,'history_presensi_show'])->name('history.presensi.show');
     Route::post('/history/presensi/{mapel}/{kelas}/{pertemuan}', [MainController::class,'history_presensi_update'])->name('history.presensi.update');
 });
